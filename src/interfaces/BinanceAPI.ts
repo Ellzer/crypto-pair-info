@@ -52,12 +52,7 @@ export interface ExchangeInfo {
   symbols: Symbol[]
 }
 
-export interface TickerPrice {
-  symbol: string
-  price: string
-}
-
-export interface Ticker24h {
+export interface Ticker24Hr {
   symbol: string
   priceChange: string
   priceChangePercent: string

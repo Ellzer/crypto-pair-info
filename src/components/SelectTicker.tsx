@@ -1,4 +1,4 @@
-import { Card, CardBody, Stack, CardFooter, Button } from '@chakra-ui/react'
+import { Card, CardBody, Stack, Button, FormControl, FormLabel } from '@chakra-ui/react'
 
 import axios from 'axios'
 import { FC, useState } from 'react'
@@ -6,17 +6,17 @@ import { useQuery } from 'react-query'
 import { ExchangeInfo } from '../interfaces/BinanceAPI'
 import Autocomplete from './Autocomplete'
 
-interface SelectPairProps {
+interface SelectTickerProps {
   onSubmit: (s: string) => void
 }
 
-const SelectPair: FC<SelectPairProps> = ({ onSubmit }) => {
-  const [pair, setPair] = useState<string>('')
+const SelectTicker: FC<SelectTickerProps> = ({ onSubmit }) => {
+  const [ticker, setTicker] = useState<string>('')
 
   const {
     isLoading,
     error,
-    data: pairList,
+    data: tickerList,
   } = useQuery({
     queryKey: 'exchangeInfo',
     queryFn: () => axios.get<ExchangeInfo>('https://data.binance.com/api/v3/exchangeInfo'),
@@ -25,49 +25,48 @@ const SelectPair: FC<SelectPairProps> = ({ onSubmit }) => {
 
   const handleOnSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    onSubmit(pair)
+    onSubmit(ticker)
   }
 
   return (
     <Card shadow="xl" w="full">
       <form onSubmit={handleOnSubmit}>
         <CardBody>
-          <Stack w="sm" mx="auto">
-            <Autocomplete options={pairList} value={pair} onChange={setPair} />
+          <Stack w="sm" mx="auto" spacing="5">
+            <FormControl>
+              <FormLabel htmlFor="ticker">Select cryptocurrency ticker</FormLabel>
+              <Autocomplete options={tickerList} value={ticker} onChange={setTicker} />
+            </FormControl>
+            <Button
+              type="submit"
+              isDisabled={!tickerList?.includes(ticker)}
+              colorScheme="purple"
+              w="sm"
+              mx="auto"
+            >
+              Search
+            </Button>
           </Stack>
         </CardBody>
-        <CardFooter>
-          <Button
-            type="submit"
-            // isDisabled={!isConnected || !sendTransaction || !to || !amount}
-            // isLoading={isLoading}
-            colorScheme="orange"
-            size="lg"
-            w="sm"
-            mx="auto"
-          >
-            Search
-          </Button>
-        </CardFooter>
       </form>
     </Card>
   )
 }
 
-export default SelectPair
+export default SelectTicker
 
 {
   /* <FormControl>
-    <FormLabel htmlFor="pair">Select cryptocurrency pair</FormLabel>
+    <FormLabel htmlFor="ticker">Select cryptocurrency ticker</FormLabel>
     <Input
-      name="pair"
+      name="ticker"
       type="text"
-      list="pairs"
+      list="tickers"
       fontSize="sm"
       onChange={handleOnChange}
       value={symbol}
     />
-    <datalist id="pairs">
+    <datalist id="tickers">
       {data?.map((symbol) => (
         <option key={symbol} value={symbol} />
       ))}

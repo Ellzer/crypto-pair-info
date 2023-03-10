@@ -1,73 +1,68 @@
-import { FC, useEffect, useState } from 'react'
-import { VStack, Container, Divider, useQuery } from '@chakra-ui/react'
+import { FC, useEffect, useMemo, useState } from 'react'
+import { VStack, Container, Divider, Spinner, Flex } from '@chakra-ui/react'
 import ColorModeSwitcher from './components/ColorModeSwitcher'
-import SelectPair from './components/SelectPair'
+import SelectTicker from './components/SelectTicker'
 import { useQueries } from 'react-query'
-import { Ticker24h, TickerPrice, Trade } from './interfaces/BinanceAPI'
+import { ExchangeInfo, Ticker24Hr, Trade } from './interfaces/BinanceAPI'
 import axios, { AxiosResponse } from 'axios'
 import TradesTable from './components/TradesTable'
+import TickerInfos from './components/TickerInfos'
 
 const App: FC = () => {
   const [symbol, setSymbol] = useState<string>('')
 
-  // const params = { symbol }
-
-  // const queryList = [
-  //   { queryKey: 'tickerPrice', endpoint: 'ticker/price', params },
-  //   { queryKey: 'ticker24h', endpoint: 'ticker/24hr', params },
-  //   { queryKey: 'trades', endpoint: 'trades', params: { limit: 10, ...params } },
-  // ]
-
-  // const queries = useQueries(
-  //   queryList.map(({ queryKey, endpoint, params }) => ({
-  //     queryKey,
-  //     queryFn: () =>
-  //       axios.get<Ticker24h | TickerPrice | Trade>(`https://data.binance.com/api/v3/${endpoint}`, {
-  //         params,
-  //       }),
-  //     enabled: !!symbol,
-  //   }))
-  // )
-
-  const [tickerPriceQuery, ticker24hQuery, tradesQuery] = useQueries([
+  const [exchangeInfoQuery, ticker24HrQuery, tradesQuery] = useQueries([
     {
-      queryKey: 'tickerPrice',
+      queryKey: `exchangeInfo-${symbol}`,
       queryFn: () =>
-        axios.get<TickerPrice>('https://data.binance.com/api/v3/ticker/price', {
-          params: { symbol },
-        }),
+        axios.get<ExchangeInfo>(`https://data.binance.com/api/v3/exchangeInfo?symbol=${symbol}`),
+      select: (data: AxiosResponse<ExchangeInfo, any>) => data?.data.symbols[0],
       enabled: !!symbol,
     },
     {
-      queryKey: 'ticker24h',
+      queryKey: `ticker24Hr-${symbol}`,
       queryFn: () =>
-        axios.get<Ticker24h>('https://data.binance.com/api/v3/ticker/24hr', {
-          params: { symbol },
-        }),
+        axios.get<Ticker24Hr>(`https://data.binance.com/api/v3/ticker/24hr?symbol=${symbol}`),
+      select: (data: AxiosResponse<Ticker24Hr, any>) => data?.data,
       enabled: !!symbol,
     },
     {
-      queryKey: 'trades',
+      queryKey: `trades-${symbol}`,
       queryFn: () =>
-        axios.get<Trade[]>('https://data.binance.com/api/v3/trades', {
-          params: { limit: 10, symbol },
-        }),
+        axios.get<Trade[]>(`https://data.binance.com/api/v3/trades?symbol=${symbol}&limit=${10}`),
       select: (data: AxiosResponse<Trade[], any>) => data?.data,
       enabled: !!symbol,
     },
   ])
 
-  // useEffect(() => {
-  //   console.log('tradesQuery', tradesQuery.data)
-  // }, [tradesQuery])
+  const isLoading = useMemo(
+    () => exchangeInfoQuery.isLoading || ticker24HrQuery.isLoading || tradesQuery.isLoading,
+    [exchangeInfoQuery, ticker24HrQuery, tradesQuery]
+  )
+
+  useEffect(() => {
+    console.log('data', exchangeInfoQuery.data)
+  }, [exchangeInfoQuery])
 
   return (
     <VStack minH="100vh">
       <ColorModeSwitcher ml="auto" />
-      <Container maxW="xl" centerContent>
-        <SelectPair onSubmit={setSymbol} />
+      <Container maxW="3xl" centerContent>
+        <SelectTicker onSubmit={setSymbol} />
         <Divider my="10" />
-        {tradesQuery.data && <TradesTable trades={tradesQuery.data} />}
+        {isLoading ? (
+          <Spinner size="lg" color="purple" />
+        ) : (
+          <Flex direction="row" w="full" gap="5">
+            {ticker24HrQuery.data && exchangeInfoQuery.data && (
+              <TickerInfos
+                symbolData={exchangeInfoQuery.data}
+                ticker24HrData={ticker24HrQuery.data}
+              />
+            )}
+            {tradesQuery.data && <TradesTable trades={tradesQuery.data} />}
+          </Flex>
+        )}
       </Container>
     </VStack>
   )

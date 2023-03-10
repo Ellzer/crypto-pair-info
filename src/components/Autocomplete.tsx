@@ -1,6 +1,4 @@
 import {
-  FormControl,
-  FormLabel,
   InputGroup,
   InputLeftElement,
   Icon,
@@ -30,7 +28,7 @@ const Autocomplete: FC<AutocompleteProps> = ({ options, value, onChange }) => {
     [options, value]
   )
 
-  const open = useMemo(
+  const isOpen = useMemo(
     () =>
       isFocused &&
       value &&
@@ -53,13 +51,13 @@ const Autocomplete: FC<AutocompleteProps> = ({ options, value, onChange }) => {
   }
 
   return (
-    <FormControl>
-      <FormLabel htmlFor="pair">Select cryptocurrency pair</FormLabel>
+    <>
       <InputGroup>
         <InputLeftElement pointerEvents="none">
           <Icon as={FaSearch} />
         </InputLeftElement>
         <Input
+          name="pair"
           value={value}
           placeholder="Search..."
           onChange={handleInputChange}
@@ -72,7 +70,7 @@ const Autocomplete: FC<AutocompleteProps> = ({ options, value, onChange }) => {
           </InputRightElement>
         )}
       </InputGroup>
-      {open && filteredOptions && (
+      {isOpen && filteredOptions && (
         <Card variant="outline" position="absolute" w="full" zIndex="1">
           <List mt={2}>
             {filteredOptions.map((option) => (
@@ -90,7 +88,7 @@ const Autocomplete: FC<AutocompleteProps> = ({ options, value, onChange }) => {
           </List>
         </Card>
       )}
-    </FormControl>
+    </>
   )
 }
 

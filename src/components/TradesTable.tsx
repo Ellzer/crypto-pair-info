@@ -68,13 +68,13 @@ const TradesTable: FC<TradesTableProps> = ({ trades }) => {
   )
 
   return (
-    <Card shadow="xl" w="full">
+    <Card shadow="xl" flex="3">
       <CardBody>
-        <Heading pb="5" fontSize="2xl" letterSpacing="wide" mr="auto">
+        <Heading pb="5" fontSize="lg" mr="auto">
           Recent trades
         </Heading>
         {trades.length > 0 ? (
-          <TableContainer w="full">
+          <TableContainer>
             <Table {...getTableProps()} size="sm">
               <Thead>
                 {headerGroups.map((headerGroup) => (
