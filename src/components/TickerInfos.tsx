@@ -28,9 +28,9 @@ const TickerInfos: FC<TickerInfosProps> = ({
 
   const variationColor =
     parseFloat(priceChangePercent) > 0
-      ? 'green'
+      ? 'green.400'
       : parseFloat(priceChangePercent)
-      ? 'red'
+      ? 'red.400'
       : undefined
 
   return (
@@ -63,11 +63,11 @@ const TickerInfos: FC<TickerInfosProps> = ({
             <StatNumber fontSize="md">{formatNumber(lowPrice)}</StatNumber>
           </Stat>
           <Stat size="sm">
-            <StatLabel fontSize="xs">24h Volume({baseAsset})</StatLabel>
+            <StatLabel fontSize="xs">24h Volume ({baseAsset})</StatLabel>
             <StatNumber fontSize="md">{formatNumber(volume)}</StatNumber>
           </Stat>
           <Stat size="sm">
-            <StatLabel fontSize="xs">24h Volume({quoteAsset})</StatLabel>
+            <StatLabel fontSize="xs">24h Volume ({quoteAsset})</StatLabel>
             <StatNumber fontSize="md">{formatNumber(quoteVolume)}</StatNumber>
           </Stat>
         </VStack>

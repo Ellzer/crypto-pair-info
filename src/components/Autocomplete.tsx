@@ -24,17 +24,12 @@ const Autocomplete: FC<AutocompleteProps> = ({ options, value, onChange }) => {
   const [isFocused, setIsFocused] = useState<boolean>(false)
 
   const filteredOptions = useMemo(
-    () => options?.filter((option) => option.includes(value)),
+    () => options?.filter((option) => option.replace('/', '').includes(value.replace('/', ''))),
     [options, value]
   )
 
   const isOpen = useMemo(
-    () =>
-      isFocused &&
-      value &&
-      !options?.includes(value) &&
-      filteredOptions &&
-      filteredOptions.length > 0,
+    () => isFocused && value && filteredOptions && filteredOptions.length > 0,
     [isFocused, value, options, filteredOptions]
   )
 

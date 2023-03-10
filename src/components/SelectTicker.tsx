@@ -1,6 +1,6 @@
 import { Card, CardBody, Stack, Button, FormControl, FormLabel } from '@chakra-ui/react'
 
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
 import { FC, useState } from 'react'
 import { useQuery } from 'react-query'
 import { ExchangeInfo } from '../interfaces/BinanceAPI'
@@ -13,19 +13,16 @@ interface SelectTickerProps {
 const SelectTicker: FC<SelectTickerProps> = ({ onSubmit }) => {
   const [ticker, setTicker] = useState<string>('')
 
-  const {
-    isLoading,
-    error,
-    data: tickerList,
-  } = useQuery({
+  const { data: tickerList } = useQuery({
     queryKey: 'exchangeInfo',
     queryFn: () => axios.get<ExchangeInfo>('https://data.binance.com/api/v3/exchangeInfo'),
-    select: (data) => data?.data.symbols.map(({ symbol }) => symbol),
+    select: (data) =>
+      data?.data.symbols.map(({ baseAsset, quoteAsset }) => `${baseAsset}/${quoteAsset}`),
   })
 
   const handleOnSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    onSubmit(ticker)
+    onSubmit(ticker.replace('/', ''))
   }
 
   return (
@@ -54,22 +51,3 @@ const SelectTicker: FC<SelectTickerProps> = ({ onSubmit }) => {
 }
 
 export default SelectTicker
-
-{
-  /* <FormControl>
-    <FormLabel htmlFor="ticker">Select cryptocurrency ticker</FormLabel>
-    <Input
-      name="ticker"
-      type="text"
-      list="tickers"
-      fontSize="sm"
-      onChange={handleOnChange}
-      value={symbol}
-    />
-    <datalist id="tickers">
-      {data?.map((symbol) => (
-        <option key={symbol} value={symbol} />
-      ))}
-    </datalist>
-  </FormControl> */
-}

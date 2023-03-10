@@ -40,10 +40,6 @@ const App: FC = () => {
     [exchangeInfoQuery, ticker24HrQuery, tradesQuery]
   )
 
-  useEffect(() => {
-    console.log('data', exchangeInfoQuery.data)
-  }, [exchangeInfoQuery])
-
   return (
     <VStack minH="100vh">
       <ColorModeSwitcher ml="auto" />
