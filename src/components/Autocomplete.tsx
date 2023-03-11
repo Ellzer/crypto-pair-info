@@ -30,7 +30,7 @@ const Autocomplete: FC<AutocompleteProps> = ({ options, value, onChange }) => {
 
   const isOpen = useMemo(
     () => isFocused && value && filteredOptions && filteredOptions.length > 0,
-    [isFocused, value, options, filteredOptions]
+    [isFocused, value, filteredOptions]
   )
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {

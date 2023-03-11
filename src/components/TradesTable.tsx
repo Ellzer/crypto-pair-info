@@ -1,11 +1,6 @@
 import {
   Heading,
-  Icon,
-  LinkBox,
-  LinkOverlay,
-  Spinner,
   Table,
-  TableCaption,
   TableContainer,
   Tbody,
   Text,
@@ -13,13 +8,12 @@ import {
   Th,
   Thead,
   Tr,
-  useColorModeValue,
   Flex,
   Card,
   CardBody,
 } from '@chakra-ui/react'
 
-import { FC, useMemo, useState } from 'react'
+import { FC, useMemo } from 'react'
 import { FaSort, FaSortDown, FaSortUp } from 'react-icons/fa'
 import { Trade } from '../interfaces/BinanceAPI'
 import { useTable, useSortBy, Column, CellProps } from 'react-table'
@@ -42,10 +36,12 @@ const TradesTable: FC<TradesTableProps> = ({ trades }) => {
       {
         Header: 'Price',
         accessor: 'price',
+        Cell: ({ value }: CellProps<Trade>) => <Text>{parseFloat(value)}</Text>,
       },
       {
         Header: 'Quantity',
         accessor: 'qty',
+        Cell: ({ value }: CellProps<Trade>) => <Text>{parseFloat(value)}</Text>,
       },
     ],
     []

@@ -1,8 +1,8 @@
-import { Card, CardBody, Stack, Button, FormControl, FormLabel } from '@chakra-ui/react'
+import { Card, CardBody, Stack, Button, FormControl, FormLabel, Spinner } from '@chakra-ui/react'
 
-import axios, { AxiosError } from 'axios'
+import axios from 'axios'
 import { FC, useState } from 'react'
-import { useQuery } from 'react-query'
+import { useIsFetching, useQuery } from 'react-query'
 import { ExchangeInfo } from '../interfaces/BinanceAPI'
 import Autocomplete from './Autocomplete'
 
@@ -12,6 +12,7 @@ interface SelectTickerProps {
 
 const SelectTicker: FC<SelectTickerProps> = ({ onSubmit }) => {
   const [ticker, setTicker] = useState<string>('')
+  const isFetching = useIsFetching()
 
   const { data: tickerList } = useQuery({
     queryKey: 'exchangeInfo',
@@ -41,7 +42,7 @@ const SelectTicker: FC<SelectTickerProps> = ({ onSubmit }) => {
               w="sm"
               mx="auto"
             >
-              Search
+              {isFetching > 1 ? <Spinner /> : 'Search'}
             </Button>
           </Stack>
         </CardBody>

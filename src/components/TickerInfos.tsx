@@ -23,7 +23,9 @@ const TickerInfos: FC<TickerInfosProps> = ({
 }) => {
   const formatNumber = (val: string) => {
     const num = parseFloat(val)
-    return num > 1 || num === 0 ? num.toFixed(2) : num
+    return num > 1 || num === 0
+      ? num.toLocaleString(undefined, { maximumFractionDigits: 2 })
+      : val.replace(/.0+$/, '')
   }
 
   const variationColor =
@@ -51,6 +53,7 @@ const TickerInfos: FC<TickerInfosProps> = ({
             <StatLabel fontSize="xs">24h Change</StatLabel>
             <StatNumber fontSize="md">{formatNumber(priceChange)}</StatNumber>
             <StatNumber fontSize="md" color={variationColor}>
+              {+priceChangePercent > 0 && '+'}
               {formatNumber(priceChangePercent)}%
             </StatNumber>
           </Stat>

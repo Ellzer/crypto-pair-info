@@ -1,4 +1,4 @@
-import { FC, useEffect, useMemo, useState } from 'react'
+import { FC, useCallback, useMemo, useState } from 'react'
 import { VStack, Container, Divider, Spinner, Flex } from '@chakra-ui/react'
 import ColorModeSwitcher from './components/ColorModeSwitcher'
 import SelectTicker from './components/SelectTicker'
@@ -40,11 +40,24 @@ const App: FC = () => {
     [exchangeInfoQuery, ticker24HrQuery, tradesQuery]
   )
 
+  const refetch = useCallback(() => {
+    exchangeInfoQuery.refetch()
+    ticker24HrQuery.refetch()
+    tradesQuery.refetch()
+  }, [exchangeInfoQuery, ticker24HrQuery, tradesQuery])
+
+  const handleOnSubmit = (s: string) => {
+    setSymbol((prevS) => {
+      if (prevS === s) refetch()
+      return s
+    })
+  }
+
   return (
     <VStack minH="100vh">
       <ColorModeSwitcher ml="auto" />
       <Container maxW="3xl" centerContent>
-        <SelectTicker onSubmit={setSymbol} />
+        <SelectTicker onSubmit={handleOnSubmit} />
         <Divider my="10" />
         {isLoading ? (
           <Spinner size="lg" color="purple" />
